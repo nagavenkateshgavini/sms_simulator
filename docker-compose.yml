@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  sender:
+    build:
+      context: .
+      dockerfile: Dockerfile.sender
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_QUEUE=sms_queue
+    volumes:
+      - ./sender_logs:/app/logs  # Mount sender logs to local 'sender_logs' directory
+    deploy:
+      replicas: 3
+    restart: always
+
+  monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.monitor
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_API_URL=http://rabbitmq:15672/api/queues/%2f/sms_queue
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      - LOG_FILE_PATH=/app/logs/monitor.log
+    volumes:
+      - ./monitor_logs:/app/logs  # Mount monitor logs to local 'monitor_logs' directory
+    restart: always

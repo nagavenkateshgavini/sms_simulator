@@ -1,0 +1,38 @@
+FROM python:3.12-alpine as python-base
+
+ENV POETRY_VERSION=1.8.3 \
+    POETRY_HOME=/opt/poetry \
+    POETRY_VENV=/opt/poetry-venv \
+    POETRY_CACHE_DIR=/opt/.cache
+
+# Create stage for Poetry installation
+FROM python-base as poetry-base
+
+# Creating a virtual environment just for poetry and install it with pip
+RUN python3 -m venv $POETRY_VENV \
+	&& $POETRY_VENV/bin/pip install -U pip setuptools \
+	&& $POETRY_VENV/bin/pip install poetry==${POETRY_VERSION}
+
+# Create a new stage from the base python image
+FROM python-base as sms-app-sender
+
+COPY --from=poetry-base ${POETRY_VENV} ${POETRY_VENV}
+
+ENV PATH="${PATH}:${POETRY_VENV}/bin"
+
+WORKDIR /sms_simulator
+
+COPY poetry.lock pyproject.toml .
+
+RUN touch README.md
+RUN poetry check
+
+# Install Dependencies
+RUN poetry install --no-interaction --no-cache --no-dev
+
+# Copy Application
+COPY sms_simulator/ sms_simulator/
+
+
+
+CMD ["poetry", "run", "python", "sms_simulator/monitor.py" ]
