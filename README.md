@@ -30,7 +30,7 @@ The project uses the following technologies:
 
 ---
 
-# Setup Instructions
+## Setup Instructions
 
 ## Local Setup:
 
@@ -215,7 +215,7 @@ docker-compose logs -f monitor
 ```
 ----
 
-# Clean Up:
+## Clean Up:
 
 ### local setup:
 
@@ -243,7 +243,7 @@ docker rm sms_simulator-sender sms_simulator-monitor redis rabbitmq
 
 ---
 
-# Design Consideration:
+## Design Consideration:
 This section covers the key design choices made for the project:
 
 ### 1. Why RabbitMQ?
@@ -262,7 +262,7 @@ Redis is used to track statistics (e.g., number of messages sent, failed, and av
 
 ---
 
-# Future Enhancements:
+## Future Enhancements:
 
 Here are some potential enhancements that can be added to the project in the future:
 
