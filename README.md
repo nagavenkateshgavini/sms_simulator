@@ -247,7 +247,7 @@ docker image rm <Image-id>
 
 ---
 
-## Design Consideration: 🔧
+## 🔧 Design Consideration:
 This section covers the key design choices made for the project:
 
 **1. Why RabbitMQ?**
