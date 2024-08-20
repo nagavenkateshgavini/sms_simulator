@@ -5,7 +5,7 @@ import time
 import redis
 import logging
 import string
-from typing import Any
+from pika.spec import Basic, BasicProperties
 
 from stats import Stats
 from config.sender_config import sender_config
@@ -56,11 +56,12 @@ class Sender:
         except redis.ConnectionError as e:
             self.logger.error(f"Error updating stats in Redis: {e}")
 
-    def send_message(self, ch: Any, method: Any, properties: Any, body: Any) -> None:
+    def send_message(self, ch: pika.adapters.blocking_connection.BlockingChannel,
+                     method: Basic.Deliver, properties: BasicProperties, body: bytes) -> None:
         try:
             message_data = json.loads(body)
-            phone_number = message_data['phone_number']
-            message = message_data['message']
+            phone_number = message_data.get('phone_number')
+            message = message_data.get('message')
 
             start_time = time.time()
             time.sleep(random.expovariate(1 / self.mean_time))
