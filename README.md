@@ -32,7 +32,7 @@ The project uses the following technologies:
 
 ## 🚀 Setup Instructions
 
-## Local Setup: 🖥️
+## 🖥️   Local Setup:
 
 #### 1. Clone the Repository
 
@@ -216,7 +216,7 @@ docker-compose logs -f monitor
 ```
 ----
 
-## Clean Up: 🧹
+## 🧹 Clean Up:
 
 #### local setup:
 
