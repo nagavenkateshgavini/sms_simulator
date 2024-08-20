@@ -37,7 +37,7 @@ The project uses the following technologies:
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/sms_simulation.git
+git clone https://github.com/nagavenkateshgavini/sms_simulator.git
 cd sms_simulation
 ```
 
@@ -105,21 +105,21 @@ You can run each component (Producer, Sender, Monitor) from your local machine.
 To run the Producer (to generate SMS messages and send them to RabbitMQ):
 
 ```bash
-python producer.py --num-messages 1000
+python sms_simulator/producer.py --num-messages 1000
 ```
 
 **Sender**
 To run the Sender (to consume and send SMS messages from RabbitMQ):
 
 ```bash
-python sender.py
+python sms_simulator/sender.py
 ```
 
 **Monitor**
 To run the Monitor (to track stats like messages sent, failed, and average time):
 
 ```bash
-python monitor.py --update-interval 5
+python sms_simulator/monitor.py --update-interval 5
 ```
 
 #### 5. Scaling Sender Instances
@@ -138,13 +138,14 @@ Verify the sender logs
 tail -f sender_logs/sender_instance_*
 ```
 
+- Tip: use `GNU Screen` to easily manage multiple terminal sessions
 ---
 ## Docker Setup:
 
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/sms_simulation.git
+git clone https://github.com/nagavenkateshgavini/sms_simulator.git
 cd sms_simulation
 ```
 
@@ -170,16 +171,16 @@ FAILURE_RATE=0.1
 
 #### 4. Docker Setup
 - To run RabbitMQ, Redis, and the services (Producer, Sender, and Monitor) in Docker containers, use **Docker Compose**:
-- If you have already tried local setup, shutdown the redis and rabbitmq instances to avoid port conflicts with [Steps to Shut Down Local Instances](#steps-to-shut-down-local-instances)
-- If docker and docker-compose not installed, please use the [official link](https://docs.docker.com/compose/install/)
+- If you have already tried local setup, shutdown the redis and rabbitmq instances to avoid port conflicts with the help of these commands [Steps to Shut Down Local Instances](#steps-to-shut-down-local-instances)
+- If docker-compose was not installed already, please use this [official link](https://docs.docker.com/compose/install/)
 ```bash
-docker-compose -d up --build 
+docker-compose up --build -d
 ```
 
 - To Scale sender instances with docker compose
 
 ```bash
-docker-compose up --scale sender=5 -d --build
+docker-compose up --scale sender=5 --build -d
 ```
 
 This will start the following services:
@@ -197,7 +198,7 @@ You can verify each component (Sender, Monitor) from your local machine.
 To run the Producer (to generate SMS messages and send them to RabbitMQ):
 
 ```bash
-python producer.py --num-messages 1000
+python sms_simulator/producer.py --num-messages 1000
 ```
 
 **Sender**
@@ -224,6 +225,8 @@ docker-compose logs -f monitor
 pkill -f sender.py
 ```
 
+Use `pkill -9 -f sender.py` to kill forece fully. 
+
 2. Verify
 ```bash
 ps aux | grep sender.py
@@ -238,7 +241,8 @@ docker-compose down
 
 2. Remove the images
 ```bash
-docker rm sms_simulator-sender sms_simulator-monitor redis rabbitmq
+docker image ls
+docker image rm <Image-id>
 ```
 
 ---
