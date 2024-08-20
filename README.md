@@ -170,7 +170,7 @@ FAILURE_RATE=0.1
 
 ### 4. Docker Setup
 - To run RabbitMQ, Redis, and the services (Producer, Sender, and Monitor) in Docker containers, use **Docker Compose**:
-- If you have already tried local setup, shutdown the redis and rabbitmq instances to avoid port conflicts with [Steps to Shut Down Local Instances](#steps-to-shut-down local-instances)
+- If you have already tried local setup, shutdown the redis and rabbitmq instances to avoid port conflicts with [Steps to Shut Down Local Instances](#steps-to-shut-down-local-instances)
 - If docker and docker-compose not installed, please use the [official link](https://docs.docker.com/compose/install/)
 ```bash
 docker-compose -d up --build 
@@ -318,3 +318,11 @@ On macOS (with Homebrew):
 ```bash
 brew services stop rabbitmq
 ```
+
+# References:
+1. https://python-poetry.org/docs#ci-recommendations
+2. https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html
+3. https://medium.com/@albertazzir/blazing-fast-python-docker-builds-with-poetry-a78a66f5aed0
+4. https://dev.to/farcellier/package-a-poetry-project-in-a-docker-container-for-production-3b4m
+5. https://www.cloudamqp.com/blog/how-to-run-rabbitmq-with-python.html
+6. https://hatchjs.com/pika-blockingconnection-vs-selectconnection/
