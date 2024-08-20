@@ -1,52 +1,59 @@
 import time
-import requests
 import logging
 import os
-
-# Get environment variables for RabbitMQ Management API
-RABBITMQ_API_URL = os.getenv('RABBITMQ_API_URL', 'http://localhost:15672/api/queues/%2f/sms_queue')
-RABBITMQ_USER = os.getenv('RABBITMQ_USER', 'guest')
-RABBITMQ_PASSWORD = os.getenv('RABBITMQ_PASSWORD', 'guest')
-LOG_FILE_PATH = os.getenv('LOG_FILE_PATH', '/app/logs/monitor.log')
-MONITOR_UPDATE_INTERVAL = 5  # Update every 5 seconds
-
-# Configure logging
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(message)s',
-                    handlers=[logging.FileHandler(LOG_FILE_PATH), logging.StreamHandler()])
+import redis
+import argparse
+from stats import Stats
+from config.monitor_config import monitor_config
+from utils.log_formatter import JsonFormatter
 
 
-def get_queue_stats():
-    try:
-        response = requests.get(RABBITMQ_API_URL, auth=(RABBITMQ_USER, RABBITMQ_PASSWORD))
-        if response.status_code == 200:
-            data = response.json()
-            messages_ready = data.get('messages_ready', 0)
-            messages_unacknowledged = data.get('messages_unacknowledged', 0)
-            total_messages = data.get('messages', 0)
-            consumers = data.get('consumers', 0)
-            return total_messages, messages_ready, messages_unacknowledged, consumers
-        else:
-            logging.error(f"Failed to fetch RabbitMQ stats: {response.status_code}")
-            return None, None, None, None
-    except Exception as e:
-        logging.error(f"Error fetching RabbitMQ stats: {str(e)}")
-        return None, None, None, None
+class Monitor:
+    def __init__(self, redis_host: str, update_interval: int) -> None:
+        self.redis_client = redis.Redis(host=redis_host, port=6379, db=0)
+        self.update_interval = update_interval
 
+        # Configure logging
+        self.logger = logging.getLogger('Monitor')
+        self.logger.setLevel(logging.INFO)
 
-class ProgressMonitor:
-    def run(self):
+        # Stream handler for console output
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(JsonFormatter())
+        # TODO: add file handler
+        self.logger.addHandler(stream_handler)
+
+    def get_stats(self) -> Stats:
+        try:
+            current_stats_data = self.redis_client.get('sms_simulator_stats')
+            return Stats.from_redis(current_stats_data)
+        except redis.ConnectionError as e:
+            self.logger.error(f"Error connecting to Redis: {e}")
+            return Stats()
+
+    def run(self) -> None:
         while True:
-            total_messages, messages_ready, messages_unacknowledged, consumers = get_queue_stats()
-            if total_messages is not None:
-                logging.info(
-                    f"Total messages: {total_messages}, Ready: {messages_ready}, Unacknowledged: {messages_unacknowledged}, Consumers: {consumers}")
-            else:
-                logging.info("Unable to fetch RabbitMQ stats.")
+            stats = self.get_stats()
+            if stats:
+                self.logger.info(f"Messages sent: {stats.sent}, Messages failed: {stats.failed}, "
+                                 f"Avg. time per message: {stats.avg_time:.2f} sec")
+            time.sleep(self.update_interval)
 
-            time.sleep(MONITOR_UPDATE_INTERVAL)
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Monitor the SMS sender stats from Redis.")
+    parser.add_argument('--update-interval', type=int, default=int(os.getenv('MONITOR_UPDATE_INTERVAL', 5)),
+                        help="Interval (in seconds) for updating stats (default: 5 seconds)")
+    args = parser.parse_args()
+
+    monitor = Monitor(redis_host=monitor_config.redis_host, update_interval=monitor_config.monitor_update_interval)
+    monitor.run()
 
 
 if __name__ == "__main__":
-    monitor = ProgressMonitor()
-    monitor.run()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Monitor process interrupted by user.")
+    except Exception as e:
+        print(f"Unexpected error occurred: {e}")

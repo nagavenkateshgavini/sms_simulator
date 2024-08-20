@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "sms-simulator"
 version = "0.1.0"
-description = ""
+description = "Project to demonstrate SMS simulation in Python"
 authors = ["Naga Venkatesh Gavini <nagavenkat9948@gmail.com>"]
 readme = "README.md"
 
@@ -9,6 +9,9 @@ readme = "README.md"
 python = "^3.12"
 pika = "^1.3.2"
 requests = "^2.32.3"
+python-dotenv = "^1.0.1"
+pytest = "^8.3.2"
+redis = "^5.0.8"
 
 
 [build-system]

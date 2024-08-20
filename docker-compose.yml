@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   rabbitmq:
@@ -7,6 +7,25 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: 'guest'
+      RABBITMQ_DEFAULT_PASS: 'guest'
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   sender:
     build:
@@ -14,13 +33,15 @@ services:
       dockerfile: Dockerfile.sender
     depends_on:
       - rabbitmq
+      - redis
     environment:
       - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_QUEUE=sms_queue
-    volumes:
-      - ./sender_logs:/app/logs  # Mount sender logs to local 'sender_logs' directory
+      - QUEUE_NAME=${QUEUE_NAME}
+      - REDIS_HOST=redis
+      - MEAN_PROCESSING_TIME=${MEAN_PROCESSING_TIME}
+      - FAILURE_RATE=${FAILURE_RATE}
     deploy:
-      replicas: 3
+      replicas: 1
     restart: always
 
   monitor:
@@ -28,12 +49,8 @@ services:
       context: .
       dockerfile: Dockerfile.monitor
     depends_on:
-      - rabbitmq
+      - redis
     environment:
-      - RABBITMQ_API_URL=http://rabbitmq:15672/api/queues/%2f/sms_queue
-      - RABBITMQ_USER=guest
-      - RABBITMQ_PASSWORD=guest
-      - LOG_FILE_PATH=/app/logs/monitor.log
-    volumes:
-      - ./monitor_logs:/app/logs  # Mount monitor logs to local 'monitor_logs' directory
+      - REDIS_HOST=redis
+      - MONITOR_UPDATE_INTERVAL=${MONITOR_UPDATE_INTERVAL}
     restart: always
