@@ -34,14 +34,14 @@ The project uses the following technologies:
 
 ## Local Setup:
 
-### 1. Clone the Repository
+#### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/sms_simulation.git
 cd sms_simulation
 ```
 
-### 2. Install Dependencies
+#### 2. Install Dependencies
 This project uses Poetry to manage dependencies. Make sure you have Poetry installed.
 To install poetry use this [Link](https://python-poetry.org/docs/)
 
@@ -51,7 +51,7 @@ poetry install
 poetry shell
 ```
 
-### 3. Install rabbitmq and redis locally
+#### 3. Install rabbitmq and redis locally
 **Install Redis:**
 
 On macOS (with Homebrew):
@@ -84,7 +84,7 @@ sudo systemctl enable rabbitmq-server
 sudo systemctl start rabbitmq-server
 ```
 
-### 3. Set Up .env File
+#### 3. Set Up .env File
 Create a .env file in the root of the project and configure the environment variables:
 
 ```bash
@@ -98,7 +98,7 @@ FAILURE_RATE=0.1
 - `MEAN_PROCESSING_TIME` is in seconds and represents the average processing time for each message.
 - `FAILURE_RATE` is a probability, where 0.1 indicates a 10% likelihood of message failure.
 
-### 4. Running the Components
+#### 4. Running the Components
 You can run each component (Producer, Sender, Monitor) from your local machine.
 
 **Producer**
@@ -122,7 +122,7 @@ To run the Monitor (to track stats like messages sent, failed, and average time)
 python monitor.py --update-interval 5
 ```
 
-### 5. Scaling Sender Instances
+#### 5. Scaling Sender Instances
 
 You can scale the number of sender.py instances dynamically using the `scale_sender.sh` script.
 
@@ -141,14 +141,14 @@ tail -f sender_logs/sender_instance_*
 ---
 ## Docker Setup:
 
-### 1. Clone the Repository
+#### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/sms_simulation.git
 cd sms_simulation
 ```
 
-### 2. Install Dependencies
+#### 2. Install Dependencies
 This project uses Poetry to manage dependencies. Make sure you have Poetry installed.
 
 To install the dependencies, run:
@@ -156,7 +156,7 @@ To install the dependencies, run:
 poetry install
 ```
 
-### 3. Set Up .env File
+#### 3. Set Up .env File
 Create a .env file in the root of the project and configure the environment variables:
 
 ```bash
@@ -168,7 +168,7 @@ MEAN_PROCESSING_TIME=2
 FAILURE_RATE=0.1
 ```
 
-### 4. Docker Setup
+#### 4. Docker Setup
 - To run RabbitMQ, Redis, and the services (Producer, Sender, and Monitor) in Docker containers, use **Docker Compose**:
 - If you have already tried local setup, shutdown the redis and rabbitmq instances to avoid port conflicts with [Steps to Shut Down Local Instances](#steps-to-shut-down-local-instances)
 - If docker and docker-compose not installed, please use the [official link](https://docs.docker.com/compose/install/)
@@ -190,7 +190,7 @@ This will start the following services:
 - **Monitor**
 - **Sender**
 
-### 5. Verify the individual Components
+#### 5. Verify the individual Components
 You can verify each component (Sender, Monitor) from your local machine.
 
 **Producer**
