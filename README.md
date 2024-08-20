@@ -1,4 +1,4 @@
-# SMS Simulation Project
+# 📲 SMS Simulation Project
 
 This project simulates an SMS alert service using **RabbitMQ** and **Redis**. The service consists of three main components:
 
@@ -11,7 +11,7 @@ This project simulates an SMS alert service using **RabbitMQ** and **Redis**. Th
 
 ---
 
-## Requirements
+## 🛠️ Requirements
 
 The project uses the following technologies:
 
@@ -21,7 +21,7 @@ The project uses the following technologies:
 - **Redis** for tracking statistics
 - **Docker Compose** for running all components inside docker VMs
 
-## Features
+## ✨ Features
 
 - **Producer**: Simulates SMS messages and sends them to a RabbitMQ queue.
 - **Sender**: Consumes the messages from RabbitMQ, simulates sending SMS, and updates stats in Redis (messages sent, failed, and average time per message).
@@ -30,9 +30,9 @@ The project uses the following technologies:
 
 ---
 
-## Setup Instructions
+## 🚀 Setup Instructions
 
-## Local Setup:
+## Local Setup: 🖥️
 
 #### 1. Clone the Repository
 
@@ -140,7 +140,7 @@ tail -f sender_logs/sender_instance_*
 
 - Tip: use `GNU Screen` to easily manage multiple terminal sessions
 ---
-## Docker Setup:
+## 🐳 Docker Setup:
 
 #### 1. Clone the Repository
 
@@ -216,7 +216,7 @@ docker-compose logs -f monitor
 ```
 ----
 
-## Clean Up:
+## Clean Up: 🧹
 
 #### local setup:
 
@@ -247,7 +247,7 @@ docker image rm <Image-id>
 
 ---
 
-## Design Consideration:
+## Design Consideration: 🔧
 This section covers the key design choices made for the project:
 
 **1. Why RabbitMQ?**
@@ -268,7 +268,7 @@ Redis is used to track statistics (e.g., number of messages sent, failed, and av
 
 ---
 
-## Future Enhancements:
+## 🚀 Future Enhancements:
 
 Here are some potential enhancements that can be added to the project in the future:
 
@@ -325,7 +325,7 @@ On macOS (with Homebrew):
 brew services stop rabbitmq
 ```
 
-# References:
+# 🔗 References:
 1. https://python-poetry.org/docs#ci-recommendations
 2. https://www.cloudamqp.com/blog/part4-rabbitmq-for-beginners-exchanges-routing-keys-bindings.html
 3. https://medium.com/@albertazzir/blazing-fast-python-docker-builds-with-poetry-a78a66f5aed0
