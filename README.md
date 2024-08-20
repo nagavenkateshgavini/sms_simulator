@@ -217,7 +217,7 @@ docker-compose logs -f monitor
 
 ## Clean Up:
 
-### local setup:
+#### local setup:
 
 1. Gracefully shutdown all the sender instances
 ```bash
@@ -229,7 +229,7 @@ pkill -f sender.py
 ps aux | grep sender.py
 ```
 
-### docker setup:
+#### docker setup:
 
 1. Shutdown the docker services:
 ```bash
@@ -246,14 +246,16 @@ docker rm sms_simulator-sender sms_simulator-monitor redis rabbitmq
 ## Design Consideration:
 This section covers the key design choices made for the project:
 
-### 1. Why RabbitMQ?
+**1. Why RabbitMQ?**
+
 RabbitMQ is used as a message broker because it provides reliable and scalable communication between services. In this project, RabbitMQ enables the producer to publish SMS messages to a queue, which is then consumed by multiple sender instances. We chose RabbitMQ due to:
 
 - **Durability:** RabbitMQ supports durable queues and persistent messages, ensuring messages are not lost if RabbitMQ crashes.
 - **Scalability:** It can easily handle scaling by allowing multiple consumers (senders) to process messages concurrently.
 - **Reliability:** It provides acknowledgment mechanisms, ensuring that messages are delivered exactly once, even in case of failures.
 
-### 2. Why Redis?
+**2. Why Redis?**
+
 Redis is used to track statistics (e.g., number of messages sent, failed, and average processing time). Redis is chosen because:
 
 - **In-memory Speed:** Redis is an in-memory key-value store, making it extremely fast for storing and retrieving stats in real-time.
@@ -266,25 +268,25 @@ Redis is used to track statistics (e.g., number of messages sent, failed, and av
 
 Here are some potential enhancements that can be added to the project in the future:
 
-### 1. Testing with Pytest:
+**1. Testing with Pytest:**
 
 - Unit and integration tests can be written using pytest to ensure the correctness of each component, including RabbitMQ
     message handling, Redis stats tracking, and overall message flow.
 
-### 2. Persistent Volumes:
+**2. Persistent Volumes:**
 
 - Use Docker volumes to persist RabbitMQ and Redis data, ensuring that messages and stats remain intact even if the 
     containers are removed or restarted.
 
-### 3. Security:
+**3. Security:**
 - No security is provided for Redis and RabbitMQ in this demo project. In production, secure connections
     should be configured for both Redis and RabbitMQ to protect sensitive data and ensure authentication.
 
-### 4. CI/CD Pipeline:
+**4. CI/CD Pipeline:**
 - Implement a CI/CD pipeline to automatically build Docker images for the project and push them to a container registry 
     (e.g., Docker Hub or a cloud-based image repository like Google Container Registry or AWS ECR).
 
-### 5. Logging to a File for Better Observability:
+**5. Logging to a File for Better Observability:**
 - Although logs are currently printed to the console, they should also be logged to a file using structured logging for 
     better observability and to track system behavior over time.
 
